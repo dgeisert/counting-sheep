@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Boid : MonoBehaviour
 {
+    public float speed, maxSpeed;
     public float dx, dz;
+    public float doMove;
     public float x
     {
         get
@@ -34,7 +36,19 @@ public class Boid : MonoBehaviour
 
     public void Move()
     {
-        transform.position += new Vector3(dx, 0, dz) * Time.deltaTime;
-        transform.LookAt(transform.position - new Vector3(dx, 0, dz));
+        Vector3 move = new Vector3(dx, 0, dz);
+        if (move.magnitude > 5 || doMove > 0)
+        {
+            move = Mathf.Min(move.magnitude, maxSpeed) * move.normalized;
+            dx = move.x;
+            dz = move.z;
+            transform.position += move * Time.deltaTime * speed;
+            transform.LookAt(transform.position - move);
+        }
+        doMove += Time.deltaTime;
+        if (doMove >= 1)
+        {
+            doMove = -2 * Random.value;
+        }
     }
 }

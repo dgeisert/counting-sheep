@@ -11,10 +11,17 @@ public class BoidManager : MonoBehaviour
 
     private Vector3 center;
 
+    [SerializeField] private float speed = 1;
+    [SerializeField] private float maxSpeed = 1;
+
     [SerializeField] private float avoidRange = 1;
     [SerializeField] private float visualRange = 1;
     [SerializeField] private float avoidTurn = 1;
     [SerializeField] private float centerTurn = 1;
+
+    [SerializeField] private float avoidDogRange = 1;
+    [SerializeField] private float avoidBarkRange = 1;
+    [SerializeField] private float dogModifier = 1;
 
     void Start()
     {
@@ -24,6 +31,8 @@ public class BoidManager : MonoBehaviour
             Boid b = Instantiate(boid, new Vector3((Random.value - 0.5f) * range.x, 0, (Random.value - 0.5f) * range.y), Quaternion.Euler(0, Random.value * 360, 0), transform);
             b.dx = Random.value;
             b.dz = Random.value;
+            b.speed = speed;
+            b.maxSpeed = maxSpeed;
             boids.Add(b);
         }
     }
@@ -33,6 +42,11 @@ public class BoidManager : MonoBehaviour
     {
         foreach (var b in boids)
         {
+            if (Vector3.Distance(Dog.xyz, b.xyz) < avoidDogRange)
+            {
+                b.dx -= (Dog.xyz.x - b.x) * avoidTurn * dogModifier;
+                b.dz -= (Dog.xyz.z - b.z) * avoidTurn * dogModifier;
+            }
             float i = 0;
             float moveX = 0;
             float moveZ = 0;
