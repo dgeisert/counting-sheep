@@ -15,4 +15,8 @@ public class InGameUI : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+    public void Restart()
+    {
+        SceneChanger.Restart();
+    }
 }

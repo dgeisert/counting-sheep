@@ -9,65 +9,43 @@ public class Game : MonoBehaviour
     public ScoreScreen scoreScreen;
     public InGameUI inGameUI;
     public bool active = true;
-    public static float Score
-    {
-        get
-        {
-            if (Instance)
-            {
-                return Instance.score;
-            }
-            return -1f;
-        }
-        set
-        {
-            if (Instance)
-            {
-                Instance.score = value;
-                Instance.inGameUI.UpdateScore(value);
-            }
-        }
-    }
+    List<FencedArea> fencedAreas;
     public float score;
     int step = 3;
     // Start is called before the first frame update
     void Start()
     {
         Instance = this;
+        active = true;
         pauseMenu.gameObject.SetActive(false);
         scoreScreen.gameObject.SetActive(false);
         inGameUI.gameObject.SetActive(true);
+        fencedAreas = new List<FencedArea>();
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            fencedAreas.Add(transform.GetChild(i).GetComponent<FencedArea>());
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (active)
+        bool win = true;
+        foreach (var fa in fencedAreas)
         {
-            if (Controls.Pause)
+            if (!fa.full)
             {
-                Pause();
+                win = false;
+                break;
             }
-            Score += Time.deltaTime * Random.value * 100;
         }
-    }
-
-    public void Pause()
-    {
-        pauseMenu.gameObject.SetActive(!pauseMenu.gameObject.activeSelf);
-    }
-
-    void Next()
-    {
-        if (step > 0)
+        if (active && win)
         {
-            step--;
-            if (step == 0)
-            {
-                inGameUI.EndGame(true);
-                scoreScreen.EndGame(true);
-                pauseMenu.gameObject.SetActive(false);
-            }
+            active = false;
+            Dog.Instance.Win();
+            inGameUI.EndGame(true);
+            scoreScreen.EndGame(true);
+            pauseMenu.gameObject.SetActive(false);
         }
     }
 }

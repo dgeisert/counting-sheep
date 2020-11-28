@@ -11,14 +11,11 @@ public class ScoreScreen : MonoBehaviour
     public void EndGame(bool victory = false)
     {
         gameObject.SetActive(true);
-        victoryDisplay.gameObject.SetActive(victory);
-        defeatDisplay.gameObject.SetActive(!victory);
-        scoreText.text = Game.Score.ToString("#,#");
     }
 
-    public void Restart()
+    public void Next()
     {
-        SceneChanger.LoadScene(Scenes.Game);
+        SceneChanger.LoadNext();
     }
     public void Menu()
     {

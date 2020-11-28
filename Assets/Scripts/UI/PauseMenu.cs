@@ -12,10 +12,6 @@ public class PauseMenu : MonoBehaviour
     {
         Time.timeScale = 1;
     }
-    public void Resume()
-    {
-        Game.Instance.Pause();
-    }
     public void Restart()
     {
         SceneChanger.LoadScene(Scenes.Game);

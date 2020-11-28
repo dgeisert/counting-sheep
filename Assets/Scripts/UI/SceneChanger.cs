@@ -15,15 +15,40 @@ public class SceneChanger : MonoBehaviour
     public static SceneChanger Instance;
     public static void LoadScene(Scenes scene)
     {
+        Instance.loadScene((int) scene);
+    }
+    public static void LoadScene(int scene)
+    {
         Instance.loadScene(scene);
     }
+    public static void LoadNext()
+    {
+        int scene = SceneManager.GetActiveScene().buildIndex == SceneManager.sceneCountInBuildSettings - 1 ?
+            1 :
+            SceneManager.GetActiveScene().buildIndex + 1;
+        LoadScene(scene);
+    }
+    public static void Restart()
+    {
+        LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 
-    public UnityEngine.UI.Image blackout;
+    public UnityEngine.UI.Image topLid, bottomLid, cover;
+    public Vector3 topPos, bottomPos;
     public void Start()
     {
+        topPos = topLid.transform.position;
+        bottomPos = bottomLid.transform.position;
         Instance = this;
-        loadScene(Scenes.MainMenu);
+        loadScene((int) Scenes.MainMenu);
         SceneManager.sceneLoaded += OnSceneLoaded;
+        StartCoroutine(LateSet());
+    }
+    IEnumerator LateSet()
+    {
+        yield return null;
+        yield return null;
+        yield return null;
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
@@ -31,7 +56,7 @@ public class SceneChanger : MonoBehaviour
     }
     bool isLoading = false;
 
-    public void loadScene(Scenes scene)
+    public void loadScene(int scene)
     {
         if (!isLoading)
         {
@@ -41,29 +66,40 @@ public class SceneChanger : MonoBehaviour
     }
     IEnumerator DoLoadIn()
     {
-        while (blackout.color.a > 0)
+        topLid.gameObject.SetActive(false);
+        bottomLid.gameObject.SetActive(false);
+        cover.gameObject.SetActive(true);
+        cover.color = Color.black;
+        while (cover.color.a > 0)
         {
-            Color c = blackout.color;
-            c.a -= 0.02f;
-            blackout.color = c;
+            Color c = cover.color;
+            c.a -= 0.005f;
+            cover.color = c;
             yield return null;
         }
-        blackout.gameObject.SetActive(false);
+        cover.gameObject.SetActive(false);
         isLoading = false;
     }
-    IEnumerator DoLoadScene(Scenes scene)
+    IEnumerator DoLoadScene(int scene)
     {
-        Debug.Log(scene);
-        blackout.gameObject.SetActive(true);
+        topLid.gameObject.SetActive(true);
+        bottomLid.gameObject.SetActive(true);
+        topLid.transform.position = topPos;
+        bottomLid.transform.position = bottomPos;
+        topLid.color = new Color(0, 0, 0, 0.5f);
+        bottomLid.color = new Color(0, 0, 0, 0.5f);
         float startTime = Time.time;
-        while (blackout.color.a < 1)
+        while (topLid.color.a < 1)
         {
-            Color c = blackout.color;
-            c.a += 0.02f;
-            blackout.color = c;
+            topLid.transform.position -= Vector3.up * 3;
+            bottomLid.transform.position += Vector3.up * 3;
+            Color c = topLid.color;
+            c.a += 0.0025f;
+            topLid.color = c;
+            bottomLid.color = c;
             yield return null;
         }
-        UnityEngine.SceneManagement.SceneManager.LoadScene((int) scene);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
     }
 
 }
