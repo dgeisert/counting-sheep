@@ -16,9 +16,9 @@ public class Menu : MonoBehaviour
     {
         OpenMenu();
     }
-    public void PlayGame()
+    public void PlayGame(int scene = 2)
     {
-        SceneChanger.LoadScene(Scenes.Game);
+        SceneChanger.LoadScene(scene);
     }
     public void OpenSettings()
     {
