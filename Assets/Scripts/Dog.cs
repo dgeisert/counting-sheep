@@ -17,16 +17,20 @@ public class Dog : MonoBehaviour
     [SerializeField] private Transform body;
     [SerializeField] private ParticleSystem barkParticles;
     [SerializeField] private ParticleSystem winParticle;
+    public BoidAvoid dogAvoider, barkAvoider;
     private AudioSource barkSound, winAudio;
-    // Start is called before the first frame update
-    void Start()
+
+    private void Awake()
     {
         Instance = this;
+    }
+
+    void Start()
+    {
         barkSound = GetComponent<AudioSource>();
         winAudio = winParticle.gameObject.GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector3 move = Vector3.zero;
@@ -50,12 +54,23 @@ public class Dog : MonoBehaviour
         transform.position += move;
         body.LookAt(transform.position - move);
 
+        //Set height based on island
+        transform.position += Vector3.up * (IslandBuilder.Instance.GetHeight(transform.position) - transform.position.y) * 0.5f;
+
         if (Controls.Bark)
         {
-            barkSound.pitch = 0.9f + Random.value / 5f;
-            barkSound.Play();
-            barkParticles.Play();
+            StartCoroutine(Bark());
         }
+    }
+
+    IEnumerator Bark()
+    {
+        barkSound.pitch = 0.9f + Random.value / 5f;
+        barkSound.Play();
+        barkParticles.Play();
+        barkAvoider.gameObject.SetActive(true);
+        yield return null;
+        barkAvoider.gameObject.SetActive(false);
     }
 
     public void Win()

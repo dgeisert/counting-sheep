@@ -34,6 +34,11 @@ public class Boid : MonoBehaviour
     }
     public Vector3 visualNearbyCenter;
 
+    public void Start()
+    {
+        transform.position += Vector3.up * IslandBuilder.Instance.GetHeight(transform.position);
+    }
+
     public void Move()
     {
         Vector3 move = new Vector3(dx, 0, dz);
@@ -44,11 +49,30 @@ public class Boid : MonoBehaviour
             dz = move.z;
             transform.position += move * Time.deltaTime * speed;
             transform.LookAt(transform.position - move);
+            transform.position += Vector3.up * (IslandBuilder.Instance.GetHeight(transform.position) - transform.position.y) * 0.5f;
         }
         doMove += Time.deltaTime;
         if (doMove >= 1)
         {
             doMove = -2 * Random.value;
         }
+    }
+
+    public void Avoid(Vector3 pos, float range, float turn, float modifier)
+    {
+        //if avoider is near move away
+        float dist = Vector3.Distance(pos, xyz);
+        if (dist < range)
+        {
+            Vector3 dir = (new Vector3(transform.position.x - pos.x, transform.position.y - pos.y, transform.position.z - pos.z)).normalized;
+            dx += (range - dist) / range * dir.x * turn * modifier;
+            dz += (range - dist) / range * dir.z * turn * modifier;
+        }
+    }
+
+    public void Die()
+    {
+        BoidManager.sheepFlock.boids.Remove(this);
+        Destroy(gameObject);
     }
 }
