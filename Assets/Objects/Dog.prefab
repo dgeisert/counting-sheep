@@ -293,7 +293,8 @@ MonoBehaviour:
   body: {fileID: 3518575600680426215}
   barkParticles: {fileID: 4979963103245465277}
   winParticle: {fileID: 8322706990127296405}
-  barkAvoider: {fileID: 0}
+  dogAvoider: {fileID: 7777841995225707159}
+  barkAvoider: {fileID: 8310905544254901493}
 --- !u!82 &425311614160195535
 AudioSource:
   m_ObjectHideFlags: 0
@@ -404,7 +405,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avoiderRange: 5
-  avoiderModifier: 0.5
+  avoiderModifier: 5
 --- !u!1 &471199733099438641
 GameObject:
   m_ObjectHideFlags: 0
@@ -5698,7 +5699,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avoiderRange: 15
-  avoiderModifier: 10
+  avoiderModifier: 20
 --- !u!1 &3383771936054469223
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,6 +7,8 @@ public class Boid : MonoBehaviour
     public float speed, maxSpeed;
     public float dx, dz;
     public float doMove;
+    public GameObject deathParticles;
+    public Vector3 startPos;
     public float x
     {
         get
@@ -37,6 +39,7 @@ public class Boid : MonoBehaviour
     public void Start()
     {
         transform.position += Vector3.up * IslandBuilder.Instance.GetHeight(transform.position);
+        startPos = transform.position;
     }
 
     public void Move()
@@ -73,6 +76,7 @@ public class Boid : MonoBehaviour
     public void Die()
     {
         BoidManager.sheepFlock.boids.Remove(this);
+        Destroy(Instantiate(deathParticles, transform.position, Quaternion.identity), 5f);
         Destroy(gameObject);
     }
 }

@@ -525,6 +525,8 @@ MonoBehaviour:
   dx: 0
   dz: 0
   doMove: 0
+  deathParticles: {fileID: 7846773997702948862, guid: b64f5784bb8c0467a82544fa9da09029,
+    type: 3}
   visualNearbyCenter: {x: 0, y: 0, z: 0}
 --- !u!65 &9032141126740282631
 BoxCollider:

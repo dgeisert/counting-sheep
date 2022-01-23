@@ -5,7 +5,10 @@ using UnityEngine;
 public class BoidManager : MonoBehaviour
 {
     public static BoidManager sheepFlock;
-    [SerializeField] private Boid boid;
+
+    public Boid boid;
+    public int count;
+
     public List<Boid> boids;
 
     private Vector3 center;
@@ -19,8 +22,9 @@ public class BoidManager : MonoBehaviour
     [SerializeField] private float visualRange = 1;
     [SerializeField] private float avoidTurn = 1;
     [SerializeField] private float centerTurn = 1;
-    [SerializeField] private float globalCenterBias = 1;
+    //[SerializeField] private float globalCenterBias = 1;
     [SerializeField] private bool isSheepFlock;
+    [SerializeField] private float mapPushVal = 0.2f;
 
     void Awake()
     {
@@ -30,18 +34,30 @@ public class BoidManager : MonoBehaviour
         }
     }
 
+    public void AddBoid()
+    {
+        Boid b = GameObject.Instantiate(
+            boid,
+            transform.position + new Vector3(Random.value, 0, Random.value) * Mathf.Sqrt(count),
+            Quaternion.identity
+        );
+        b.transform.SetParent(transform);
+        b.dx = Random.value;
+        b.dz = Random.value;
+        b.speed = speed;
+        b.maxSpeed = maxSpeed;
+        boids.Add(b);
+    }
+
     void Start()
     {
         boids = new List<Boid>();
-        for (int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < count; i++)
         {
-            Boid b = transform.GetChild(i).GetComponent<Boid>();
-            b.dx = Random.value;
-            b.dz = Random.value;
-            b.speed = speed;
-            b.maxSpeed = maxSpeed;
-            boids.Add(b);
+            AddBoid();
         }
+        boidAvoids.Add(Dog.Instance.barkAvoider);
+        boidAvoids.Add(Dog.Instance.dogAvoider);
         /*
         //init boid sheep, probably need to have sheep predetermined in scenes
         boids = new List<Boid>();
@@ -98,12 +114,18 @@ public class BoidManager : MonoBehaviour
                 b.dz += (b.visualNearbyCenter.z - b.z) * centerTurn;
             }
             //global center bias
-            b.dx += -b.x * globalCenterBias;
-            b.dz += -b.x * globalCenterBias;
+            //b.dx += -b.x * globalCenterBias;
+            //b.dz += -b.z * globalCenterBias;
 
             //Apply avoid of other sheep
             b.dx += moveX * avoidTurn;
             b.dz += moveZ * avoidTurn;
+
+            //Apply map push values
+            Vector2 mapPush = IslandBuilder.Instance.GetPush(b.xyz);
+            b.dx += mapPushVal * mapPush.x;
+            b.dz += mapPushVal * mapPush.y;
+            
             b.Move();
         }
     }

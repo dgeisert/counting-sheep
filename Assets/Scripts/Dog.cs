@@ -50,8 +50,14 @@ public class Dog : MonoBehaviour
         {
             move += (Vector3.right - Vector3.forward) * Time.deltaTime * speed;
         }
-        //look in the direction of movement
-        transform.position += move;
+
+        //if the dog is trying to go up a mountain, don't let it;
+        if (IslandBuilder.Instance.GetHeight(transform.position + move) < (IslandBuilder.Instance.wallHeight * IslandBuilder.Instance.scale) - 0.2f)
+        {
+            //look in the direction of movement
+            transform.position += move;
+        }
+
         body.LookAt(transform.position - move);
 
         //Set height based on island
